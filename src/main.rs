@@ -33,6 +33,32 @@ fn parse_html(html: &str) -> ParseData {
     ParseData {titles, links}
 }
 
-fn main() {
-    println!("Hello, world!");
+async fn process_urls(urls: Vec<String>) {
+    let mut handles = Vec::new();
+    
+    for url in urls {
+        let handle = task::spawn(async move {
+            match fetch_html(url.clone()).await {
+                Ok(html) => {
+                    let parse_data = parse_html(&html);
+                    println!("Parsed data from {}: {:?}", url, parse_data);
+                } 
+                Err(e) => println!("Error fetching {}: {}", url, e),
+            }
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.await.unwrap();
+    }
+}
+
+#[tokio::main]
+async fn main() {
+    let urls = vec![
+        "https://google.com".to_string()
+    ];
+
+    process_urls(urls).await;
 }
