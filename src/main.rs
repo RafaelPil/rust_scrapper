@@ -57,7 +57,8 @@ async fn process_urls(urls: Vec<String>) {
 #[tokio::main]
 async fn main() {
     let urls = vec![
-        "https://google.com".to_string()
+        "https://google.com".to_string(),
+        "https://youtube.com".to_string(),
     ];
 
     process_urls(urls).await;
